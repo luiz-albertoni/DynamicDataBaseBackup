@@ -1,0 +1,31 @@
+{
+    "name": "root/dynamic-db-backup",
+    "description": "dynamic save dumps from you DB",
+    "type": "phpunit",
+    "require": {
+        "phpunit/phpunit": "~4.0",
+        "aws/aws-sdk-php": "^3.3",
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "mockery/mockery": "*"
+    },
+    "authors": [
+        {
+            "name": "Luiz Albertoni",
+            "email": "luiz.albertoni@gmail.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Albertoni\\DynamicDataBaseBackup\\": "src/"
+        }
+    },
+    "autoload-dev": {
+    "classmap": [
+        "tests/TestCase.php"
+    ]
+},
+
+    "minimum-stability": "dev"
+}
