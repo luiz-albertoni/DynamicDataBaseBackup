@@ -3,10 +3,19 @@
     "description": "dynamic save dumps from you DB",
     "type": "phpunit",
     "require": {
+        "php": ">=5.4.0",
+        "aws/aws-sdk-php": "^3.3",
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "vlucas/phpdotenv": "*",
+        "symfony/process": "3.4.x-dev"
+    },
+    "require-dev": {
+        "php": ">=5.4.0",
         "phpunit/phpunit": "~4.0",
         "aws/aws-sdk-php": "^3.3",
         "guzzlehttp/guzzle": "~5.3|~6.0",
-        "mockery/mockery": "*"
+        "mockery/mockery": "*",
+        "vlucas/phpdotenv": "*"
     },
     "authors": [
         {

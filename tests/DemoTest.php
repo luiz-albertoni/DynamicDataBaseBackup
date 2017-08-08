@@ -13,8 +13,6 @@ class DemoTest extends TestCase
      */
     public function testSomethingIsTrue()
     {
-        echo 'Blin Blin';
-
         $db = new \Albertoni\DynamicDataBaseBackup\DumpService();
         $db->runDump();
         $this->assertTrue(true);
