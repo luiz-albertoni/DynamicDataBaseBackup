@@ -1,5 +1,5 @@
 {
-    "name": "root/dynamic-db-backup",
+    "name": "luiz-albertoni/dynamic-db-backup",
     "description": "dynamic save dumps from you DB",
     "type": "phpunit",
     "require": {
@@ -19,7 +19,7 @@
     },
     "authors": [
         {
-            "name": "Luiz Albertoni",
+            "name": "luiz.albertoni",
             "email": "luiz.albertoni@gmail.com"
         }
     ],
