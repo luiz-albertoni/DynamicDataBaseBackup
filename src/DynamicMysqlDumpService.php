@@ -70,7 +70,7 @@ class DynamicMysqlDumpService
     }
 
     private function getLocation() {
-        return __DIR__  . '/' ;
+        return __DIR__  . '/../temp/';
     }
 
     /**
