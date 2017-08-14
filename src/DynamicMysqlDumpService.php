@@ -18,11 +18,11 @@ class DynamicMysqlDumpService
     private $specific_storage_path      = null;
     private $file_name                  = '';
 
-    public function runDump($specific_storage_type = 'local', $specific_storage_path = '')
+    public function runDump()
     {
         try {
-            $this->specific_storage_type    = $specific_storage_type;
-            $this->specific_storage_path    = $specific_storage_path;
+            $this->specific_storage_type    = Config::get('dynamic-mysql-dump.specific_storage_type');
+            $this->specific_storage_path    = Config::get('dynamic-mysql-dump.specific_storage_path');
 
             $this->generateNewDBDump();
         }
@@ -129,7 +129,7 @@ class DynamicMysqlDumpService
     }
 
     private function getNumberOfStoreDays() {
-        $stored_Days  = getenv('STORE_DAYS');
+        $stored_Days  = Config::get('dynamic-mysql-dump.store_days');
         return ($stored_Days) ? $stored_Days : 5;
     }
 
