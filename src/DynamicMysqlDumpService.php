@@ -10,18 +10,18 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Dotenv\Dotenv;
 
 
-class DumpService
+class DynamicMysqlDumpService
 {
-    private $process            = null;
-    private $specific_storage   = null;
-    private $specific_path      = null;
-    private $file_name          = '';
+    private $process                    = null;
+    private $specific_storage_type      = null;
+    private $specific_storage_path      = null;
+    private $file_name                  = '';
 
-    public function runDump($specific_storage = 'local', $specific_path = '')
+    public function runDump($specific_storage_type = 'local', $specific_storage_path = '')
     {
         try {
-            $this->specific_storage = $specific_storage;
-            $this->specific_path    = $specific_path;
+            $this->specific_storage_type    = $specific_storage_type;
+            $this->specific_storage_path    = $specific_storage_path;
 
             $this->generateNewDBDump();
         }
@@ -94,26 +94,26 @@ class DumpService
     }
 
     private function sendToSpecificStorage() {
-        if(isset($this->specific_storage)) {
+        if(isset($this->specific_storage_type)) {
 
-            $key  = $this->specific_path . $this->file_name;
+            $key  = $this->specific_storage_path . $this->file_name;
             $path = $this->getLocation() .  $this->file_name;
 
-            Storage::disk($this->specific_storage)->put($key, fopen($path, 'r+'));
-            Storage::disk($this->specific_storage)->delete($path);
+            Storage::disk($this->specific_storage_type)->put($key, fopen($path, 'r+'));
+            File::delete($path);
         }
     }
 
     private function removeOldStorage(){
-        if(isset($this->specific_storage)) {
+        if(isset($this->specific_storage_type)) {
 
             $stored_day= $this->getNumberOfStoreDays();
-            $date = strtotime(date("Y-m-d", strtotime("-'.$stored_day.' day")));
+            $date = date("Y-m-d", strtotime("-".$stored_day." day"));
 
             $database_name  = getenv('DB_DATABASE');
-            $remove_file_key=  sprintf('%s/%s-%s.sql', $this->specific_path, $date, $database_name );
+            $remove_file_key=  sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
 
-            Storage::disk($this->specific_storage)->delete($remove_file_key);
+            Storage::disk($this->specific_storage_type)->delete($remove_file_key);
         }
     }
 
