@@ -4,14 +4,12 @@
     "type": "phpunit",
     "require": {
         "php": ">=5.4.0",
-        "aws/aws-sdk-php": "^3.3",
         "vlucas/phpdotenv": "*",
         "symfony/process": "3.4.x-dev"
     },
     "require-dev": {
         "php": ">=5.4.0",
         "phpunit/phpunit": "~4.0",
-        "aws/aws-sdk-php": "^3.3",
         "mockery/mockery": "*",
         "vlucas/phpdotenv": "*"
     },
