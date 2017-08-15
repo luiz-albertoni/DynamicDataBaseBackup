@@ -20,7 +20,7 @@ composer require luiz-albertoni/dynamic-mysql-db-backup
 Publish the configuration
 
 ~~~
-php artisan vendor:publish --provider="Albertoni\DynamicDataBaseBackup\DynamicMysqlDumpServiceProvider" --tag='config' --force
+php artisan vendor:publish --provider="Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpServiceProvider" --tag='config' --force
 ~~~
 
 Set Scheduler to run the package. Add the code below in App\Console\Kernel inside the schedule method.
