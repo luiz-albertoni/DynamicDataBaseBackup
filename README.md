@@ -75,6 +75,11 @@ To use this package we are assuming:
     DB_PASSWORD, DB_USERNAME, DB_DRIVER, DB_HOST, DB_DATABASE.
     
     
+## Advices
+ In the Scheduler Class do not forget to:
+  - Import the DynamicMysqlFacade
+  - Make sure already configurate the Cron entry to your server ( https://laravel.com/docs/5.4/scheduling )
+
 ## To do
  -  Create a command to run the scheduler, beside use the Facade
  -  Expand this code to handle different databases;
