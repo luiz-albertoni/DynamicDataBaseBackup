@@ -3,10 +3,10 @@
 
 ## Overview
 
-The DynamicMysqlDatabaseBackup is Laravel package to dynamically take a dump from your Mysql database and 
+The DynamicMysqlDatabaseBackup is a Laravel package to dynamically take a dump from your Mysql database and 
 storage to a filesystem (local filesystems, Amazon S3, and Rackspace Cloud Storage).
 It also allow the user to configurate how many days the dump file should remain in the storage, 
-so it dynamically storage and remove the backup files.
+so it dynamically storage and remove the backup files through Laravel's Scheduler.
 
 
 ## Install
