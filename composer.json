@@ -2,6 +2,7 @@
     "name": "luiz-albertoni/dynamic-mysql-db-backup",
     "description": "Dynamic save mysql dumps to your specific Storage",
     "type": "phpunit",
+    "license": "MIT",
     "require": {
         "php": ">=5.5.0",
         "vlucas/phpdotenv": "*",
