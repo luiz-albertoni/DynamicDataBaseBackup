@@ -17,6 +17,12 @@ Composer install
 composer require luiz-albertoni/dynamic-mysql-db-backup
 ~~~
 
+Edit app/config/app.php to add the DynamicMysqlDumpServiceProvider under the 'providers' Array
+
+~~~
+Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpServiceProvider::class,
+~~~
+
 Publish the configuration
 
 ~~~
