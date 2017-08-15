@@ -69,4 +69,7 @@ To use this package we are assuming:
     DB_PASSWORD, DB_USERNAME, DB_DRIVER, DB_HOST, DB_DATABASE.
     
     
-    
+## To do
+ -  Create a command to run the scheduler, beside use the Facade
+ -  Expand this code to handle different databases;
+
