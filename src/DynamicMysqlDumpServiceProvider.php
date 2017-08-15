@@ -1,13 +1,12 @@
 <?php
 
-namespace Albertoni\DynamicDataBaseBackup;
+namespace Albertoni\DynamicMysqlDataBaseBackup;
 
 use Illuminate\Support\ServiceProvider;
-use Albertoni\DynamicDataBaseBackup\DynamicMysqlDumpService;
+use Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpService;
 
 class DynamicMysqlDumpServiceProvider extends ServiceProvider
 {
-
     /**
      * Perform post-registration booting of services.
      *
@@ -16,7 +15,7 @@ class DynamicMysqlDumpServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/dynamic-mysql-dump.php' => config_path('dynamic-mysql-dump'),
+            __DIR__.'/../config/dynamic-mysql-dump.php' => config_path('dynamic-mysql-dump.php'),
         ], 'config');
     }
 

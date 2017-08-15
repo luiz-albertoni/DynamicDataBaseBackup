@@ -1,6 +1,6 @@
 <?php
 
-namespace Albertoni\DynamicDataBaseBackup;
+namespace Albertoni\DynamicMysqlDataBaseBackup;
 
 use Illuminate\Support\Facades\Facade;
 

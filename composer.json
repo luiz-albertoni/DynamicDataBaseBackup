@@ -1,19 +1,19 @@
 {
-    "name": "luiz-albertoni/dynamic-db-backup",
-    "description": "dynamic save dumps from you DB",
+    "name": "luiz-albertoni/dynamic-mysql-db-backup",
+    "description": "Dynamic save mysql dumps to your specific Storage",
     "type": "phpunit",
     "require": {
-        "php": ">=5.4.0",
-        "aws/aws-sdk-php": "^3.3",
+        "php": ">=5.5.0",
         "vlucas/phpdotenv": "*",
         "symfony/process": "3.4.x-dev"
     },
+    "keywords": ["Laravel", "Database", "Dump", "Mysql"],
     "require-dev": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "phpunit/phpunit": "~4.0",
-        "aws/aws-sdk-php": "^3.3",
         "mockery/mockery": "*",
-        "vlucas/phpdotenv": "*"
+        "vlucas/phpdotenv": "*",
+        "illuminate/support": "5.1.x-dev"
     },
     "authors": [
         {
@@ -21,11 +21,10 @@
             "email": "luiz.albertoni@gmail.com"
         }
     ],
-
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Albertoni\\DynamicDataBaseBackup\\": "src/"
+            "Albertoni\\DynamicMysqlDataBaseBackup\\": "src/"
         }
     },
     "autoload-dev": {

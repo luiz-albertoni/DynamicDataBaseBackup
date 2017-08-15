@@ -1,11 +1,11 @@
 <?php
 
-namespace Albertoni\DynamicDataBaseBackup;
-
+namespace Albertoni\DynamicMysqlDataBaseBackup;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Dotenv\Dotenv;
@@ -17,37 +17,44 @@ class DynamicMysqlDumpService
     private $specific_storage_type      = null;
     private $specific_storage_path      = null;
     private $file_name                  = '';
+    public $result                      = true;
 
     public function runDump()
     {
         try {
             $this->specific_storage_type    = Config::get('dynamic-mysql-dump.specific_storage_type');
             $this->specific_storage_path    = Config::get('dynamic-mysql-dump.specific_storage_path');
-
             $this->generateNewDBDump();
         }
         catch(\Exception $e)
         {
+            $this->result = false;
             Log::error($e->getMessage());
             Log::error($e->getTraceAsString());
         }
     }
 
-
     /**
-     * @param $cmd
-     * @param $cwd
+     * @return void
      */
-    private function generateNewDBDump()
+    public function generateNewDBDump()
     {
         $cmd = $this->getDumpCommand();
 
         $cwd = $this->getLocation();
 
-        $this->setProcess($cmd, $cwd);
+        $this->createProcess($cmd, $cwd);
 
         $this->process->run();
 
+        $this->checkSuccessProcessingCommand();
+    }
+
+    /**
+     * @return void
+     */
+    public function checkSuccessProcessingCommand()
+    {
         if ($this->checkAndLogCommandError()) {
             $this->sendToSpecificStorage();
 
@@ -70,7 +77,11 @@ class DynamicMysqlDumpService
         return sprintf('mysqldump -u %s --password=%s -h %s --port=%s %s > %s', $user_name, $password, $host, $port, $database_name,  $this->file_name);
     }
 
-    private function getLocation() {
+    /**
+     * @return string
+     */
+    private function getLocation()
+    {
         return __DIR__  . '/../temp/';
     }
 
@@ -88,15 +99,17 @@ class DynamicMysqlDumpService
                 $this->process->getExitCodeText(),
                 $this->process->getWorkingDirectory()
             );
+
+            $this->result = false;
             Log::error($error);
             return false;
         }
         return true;
     }
 
-    private function sendToSpecificStorage() {
+    private function sendToSpecificStorage()
+    {
         if(isset($this->specific_storage_type)) {
-
             $key  = $this->specific_storage_path . $this->file_name;
             $path = $this->getLocation() .  $this->file_name;
 
@@ -105,10 +118,11 @@ class DynamicMysqlDumpService
         }
     }
 
-    private function removeOldStorage(){
+    private function removeOldStorage()
+    {
         if(isset($this->specific_storage_type)) {
 
-            $stored_day= $this->getNumberOfStoreDays();
+            $stored_day = $this->getNumberOfStoreDays();
             $date = date("Y-m-d", strtotime("-".$stored_day." day"));
 
             $database_name  = getenv('DB_DATABASE');
@@ -123,12 +137,20 @@ class DynamicMysqlDumpService
      * @param $cwd
      * @return Process
      */
-    private function setProcess($cmd, $cwd)
+    private function createProcess($cmd, $cwd)
     {
         $this->process = new Process($cmd, $cwd);
     }
 
-    private function getNumberOfStoreDays() {
+    public function setProcess($process)
+    {
+        $this->process = $process;
+    }
+    /**
+     * @return integer
+     */
+    private function getNumberOfStoreDays()
+    {
         $stored_Days  = Config::get('dynamic-mysql-dump.store_days');
         return ($stored_Days) ? $stored_Days : 5;
     }
