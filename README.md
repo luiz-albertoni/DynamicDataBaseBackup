@@ -55,7 +55,7 @@ What means each configuration var?
 
  - store_days :           Number of days which we want to hold the dump file. Default value = 5
 
- -specific_storage_type:  Which filesystem we are using for storage teh dump file.  Default value =  local
+ - specific_storage_type:  Which filesystem we are using for storage teh dump file.  Default value =  local
 
  - specific_storage_path: Specific path that we want to store the dump file in our filesystem.   Default value =  ''
 
