@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Dotenv\Dotenv;
+use ZipArchive;
 
 
 class DynamicMysqlDumpService
@@ -16,6 +17,7 @@ class DynamicMysqlDumpService
     private $process                    = null;
     private $specific_storage_type      = null;
     private $specific_storage_path      = null;
+    private $use_zip                    = true;
     private $file_name                  = '';
     public $result                      = true;
 
@@ -24,7 +26,11 @@ class DynamicMysqlDumpService
         try {
             $this->specific_storage_type    = Config::get('dynamic-mysql-dump.specific_storage_type');
             $this->specific_storage_path    = Config::get('dynamic-mysql-dump.specific_storage_path');
-            $this->generateNewDBDump();
+            $this->use_zip                  = Config::get('dynamic-mysql-dump.use_zip');
+
+            if ($this->shouldUseDynamicDumpInthisEnviroment()) {
+                $this->generateNewDBDump();
+            }
         }
         catch(\Exception $e)
         {
@@ -32,6 +38,23 @@ class DynamicMysqlDumpService
             Log::error($e->getMessage());
             Log::error($e->getTraceAsString());
         }
+    }
+
+    private function shouldUseDynamicDumpInthisEnviroment()
+    {
+        $use_for_app_envs         = Config::get('dynamic-mysql-dump.use_for_app_env');
+        $currently_env            = getenv('APP_ENV');
+
+        foreach ($use_for_app_envs as $use_for_app_env) {
+
+            if ($currently_env === $use_for_app_env) {
+                return  true;
+            }
+        }
+
+        $this->result = false;
+        return false;
+
     }
 
     /**
@@ -56,6 +79,7 @@ class DynamicMysqlDumpService
     public function checkSuccessProcessingCommand()
     {
         if ($this->checkAndLogCommandError()) {
+
             $this->sendToSpecificStorage();
 
             $this->removeOldStorage();
@@ -110,11 +134,20 @@ class DynamicMysqlDumpService
     private function sendToSpecificStorage()
     {
         if(isset($this->specific_storage_type)) {
-            $key  = $this->specific_storage_path . $this->file_name;
             $path = $this->getLocation() .  $this->file_name;
 
+            if ($this->use_zip) {
+                $path = $this->createZipFile($path);
+                $key  = $this->specific_storage_path . $this->getZipName();
+            } else {
+                $key  = $this->specific_storage_path . $this->file_name;
+            }
+
             Storage::disk($this->specific_storage_type)->put($key, fopen($path, 'r+'));
-            File::delete($path);
+
+            $this->deleteTempFiles($path);
+        } else {
+            $this->result = false;
         }
     }
 
@@ -124,9 +157,9 @@ class DynamicMysqlDumpService
 
             $stored_day = $this->getNumberOfStoreDays();
             $date = date("Y-m-d", strtotime("-".$stored_day." day"));
+            $database_name   = getenv('DB_DATABASE');
 
-            $database_name  = getenv('DB_DATABASE');
-            $remove_file_key=  sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
+            $remove_file_key =  ($this->use_zip)?sprintf('%s/%s-%s.zip', $this->specific_storage_path, $date, $database_name ):sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
 
             Storage::disk($this->specific_storage_type)->delete($remove_file_key);
         }
@@ -153,6 +186,42 @@ class DynamicMysqlDumpService
     {
         $stored_Days  = Config::get('dynamic-mysql-dump.store_days');
         return ($stored_Days) ? $stored_Days : 5;
+    }
+
+    /**
+     * @param $path
+     */
+    private function createZipFile($path)
+    {
+        $zip_path_name = $this->getLocation() . $this->getZipName();
+
+        $zip = new ZipArchive();
+        if ($zip->open($zip_path_name, ZipArchive::CREATE) === TRUE) {
+            $zip->addFile($path, $this->file_name);
+            $zip->close();
+        }
+
+        $this->deleteTempFiles($path);
+
+        return $zip_path_name;
+    }
+
+    /**
+     * @return string
+     */
+    private function getZipName()
+    {
+        $database_name = getenv('DB_DATABASE');
+        $zip_name = sprintf('%s-%s.zip', date('Y-m-d'), $database_name);
+        return $zip_name;
+    }
+
+    /**
+     * @param $path
+     */
+    private function deleteTempFiles($path)
+    {
+        File::delete($path);
     }
 
 }

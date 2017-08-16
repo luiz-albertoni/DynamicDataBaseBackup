@@ -12,4 +12,8 @@ return [
 
     'specific_storage_path' => '',
 
+    'use_zip' =>  true,
+
+    'use_for_app_env' =>  ['local', 'dev', 'prod'],
+
 ];

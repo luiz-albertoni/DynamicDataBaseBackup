@@ -19,19 +19,68 @@ class DemoTest extends TestCase
 
     }
 
+    /**
+     * @test
+     */
+    public function should_send_file_to_specific_storage()
+    {
+        Storage::shouldReceive('disk')->andReturnSelf();
+        Storage::shouldReceive('put')->once()->andReturn(true);
+        Storage::shouldReceive('delete')->once()->andReturn(true);
+
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_type')->andReturn('local');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_path')->andReturn('');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.store_days')->andReturn('');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_zip')->andReturn(false);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_for_app_env')->andReturns(['local', 'dev', 'prod']);
+
+        File::shouldReceive('delete')->once()->andReturnSelf();
+
+        Log::shouldReceive('info')->andReturnSelf();
+        Log::shouldReceive('error')->andReturnSelf();
+
+        $db = new \Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpService();
+        $db->runDump();
+        $this->assertTrue($db->result);
+    }
+
+    /**
+     * @test
+     */
+    public function happy_path()
+    {
+        Storage::shouldReceive('disk')->andReturnSelf();
+        Storage::shouldReceive('put')->once()->andReturn(true);
+        Storage::shouldReceive('delete')->once()->andReturn(true);
+
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_for_app_env')->andReturns(['local', 'dev', 'prod']);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_zip')->andReturn(false);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_type')->andReturn('local');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_path')->andReturn('');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.store_days')->andReturn('');
+
+        File::shouldReceive('delete')->andReturnSelf();
+
+        Log::shouldReceive('info')->andReturnSelf();
+        Log::shouldReceive('error')->andReturnSelf();
+        $db = new \Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpService();
+        $db->runDump();
+        $this->assertTrue($db->result);
+    }
 
     /**
      * @test
      */
     public function should_not_send_file_to_specific_storage()
     {
-
         Storage::shouldReceive('disk')->andReturnSelf();
         Storage::shouldReceive('put')->once()->andReturn(true);
         Storage::shouldReceive('delete')->once()->andReturn(true);
 
-        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_type')->andReturn('');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_type')->andReturn(null);
         Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_path')->andReturn('');
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_for_app_env')->andReturns(['local', 'dev', 'prod']);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_zip')->andReturn(false);
 
         File::shouldReceive('delete')->once()->andReturnSelf();
 
@@ -44,13 +93,15 @@ class DemoTest extends TestCase
         $this->assertFalse($db->result);
     }
 
-    
+
     /**
      * @test
      */
     public function should_fail_in_process_command()
     {
         Config::shouldReceive('get')->andReturnSelf();
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_for_app_env')->andReturns(['local', 'dev', 'prod']);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_zip')->andReturn(false);
 
         File::shouldReceive('delete')->andReturnSelf();
 
@@ -72,48 +123,18 @@ class DemoTest extends TestCase
         $this->assertFalse( $db->result);
     }
 
-
     /**
      * @test
      */
-    public function should_send_file_to_specific_storage()
+    public function should_not_dynamic_dump_in_this_enviroment()
     {
-
-        Storage::shouldReceive('disk')->andReturnSelf();
-        Storage::shouldReceive('put')->once()->andReturn(true);
-        Storage::shouldReceive('delete')->once()->andReturn(true);
-
+        Config::shouldReceive('get')->with('dynamic-mysql-dump.use_for_app_env')->andReturns(['banana', 'apple']);
+        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.use_zip')->andReturn(false);
         Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_type')->andReturn('local');
         Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.specific_storage_path')->andReturn('');
-        Config::shouldReceive('get')->once()->with('dynamic-mysql-dump.store_days')->andReturn('');
 
-        File::shouldReceive('delete')->once()->andReturnSelf();
-
-        Log::shouldReceive('info')->andReturnSelf();
-        
         $db = new \Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpService();
         $db->runDump();
-        $this->assertTrue($db->result);
+        $this->assertFalse($db->result);
     }
-
-
-    /**
-     * @test
-     */
-    public function happy_path()
-    {
-        Storage::shouldReceive('disk')->andReturnSelf();
-        Storage::shouldReceive('put')->once()->andReturn(true);
-        Storage::shouldReceive('delete')->once()->andReturn(true);
-
-        Config::shouldReceive('get')->andReturnSelf();
-
-        File::shouldReceive('delete')->andReturnSelf();
-
-        Log::shouldReceive('info')->andReturnSelf();
-        $db = new \Albertoni\DynamicMysqlDataBaseBackup\DynamicMysqlDumpService();
-        $db->runDump();
-        $this->assertTrue($db->result);
-    }
-
 }
