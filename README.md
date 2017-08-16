@@ -5,8 +5,8 @@
 
 The DynamicMysqlDatabaseBackup is a Laravel package to dynamically take a dump from your Mysql database and 
 storage to a filesystem (local filesystems, Amazon S3, and Rackspace Cloud Storage).
-It also allow the user to configurate how many days the dump file should remain in the storage, 
-so it dynamically storage and remove the backup files through Laravel's Scheduler.
+It also allow the user to configurate which enviroment (local, dev, stage, prod) it should take a dump, permit the user storage the dump compressing to Zip format and the user is able to configure how many days the dump file should remain in the storage, so it dynamically storage and remove the backup files through Laravel's Scheduler.
+
 
 
 ## Install
@@ -54,17 +54,25 @@ return [
     'specific_storage_type' => 'local',
 
     'specific_storage_path' => '',
+    
+    'use_zip' =>  true,
+
+    'use_for_app_env' =>  ['local', 'dev', 'prod'],
 ];
 ~~~
 
 What means each configuration var?
 
- - store_days :           Number of days which we want to hold the dump file. Default value = 5
+ - store_days :            Number of days which we want to hold the dump file. Default value = 5
 
  - specific_storage_type:  Which filesystem we are using for storage teh dump file.  Default value =  local
 
- - specific_storage_path: Specific path that we want to store the dump file in our filesystem.   Default value =  ''
+ - specific_storage_path:  Specific path that we want to store the dump file in our filesystem.   Default value =  ''
+ 
+ - use_zip:                Signal to inform if it should be compress to the Zip format
 
+ - use_for_app_env:        Specific under which enviroment the package should take a dump 
+ 
 ## Dependencies 
 
 To use this package we are assuming:
