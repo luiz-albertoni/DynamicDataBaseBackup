@@ -97,8 +97,15 @@ class DynamicMysqlDumpService
         $host           = getenv('DB_HOST');
         $port           = getenv('DB_PORT');
 
-        $this->file_name=  sprintf('%s-%s.sql', date('Y-m-d'), $database_name );
-        return sprintf('mysqldump -u %s --password=%s -h %s --port=%s %s > %s', $user_name, $password, $host, $port, $database_name,  $this->file_name);
+        if ($this->use_zip) {
+            $this->file_name=  sprintf('%s-%s.zip', date('Y-m-d'), $database_name );
+            $cmd =  sprintf('mysqldump -u %s --password=%s -h %s --port=%s %s | gzip  > %s', $user_name, $password, $host, $port, $database_name,  $this->file_name);
+        } else {
+            $this->file_name=  sprintf('%s-%s.sql', date('Y-m-d'), $database_name );
+            $cmd =  sprintf('mysqldump -u %s --password=%s -h %s --port=%s %s > %s', $user_name, $password, $host, $port, $database_name,  $this->file_name);
+        }
+
+        return $cmd;
     }
 
     /**
@@ -135,13 +142,7 @@ class DynamicMysqlDumpService
     {
         if(isset($this->specific_storage_type)) {
             $path = $this->getLocation() .  $this->file_name;
-
-            if ($this->use_zip) {
-                $path = $this->createZipFile($path);
-                $key  = $this->specific_storage_path . $this->getZipName();
-            } else {
-                $key  = $this->specific_storage_path . $this->file_name;
-            }
+            $key  = $this->specific_storage_path . $this->file_name;
 
             Storage::disk($this->specific_storage_type)->put($key, fopen($path, 'r+'));
 
