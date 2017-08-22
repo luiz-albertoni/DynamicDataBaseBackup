@@ -6,7 +6,7 @@
     "require": {
         "php": ">=5.5.0",
         "vlucas/phpdotenv": "*",
-        "symfony/process": "3.4.x-dev"
+        "symfony/process": ">=2.7.x-dev"
     },
     "keywords": ["Laravel", "Database", "Dump", "Mysql"],
     "require-dev": {
