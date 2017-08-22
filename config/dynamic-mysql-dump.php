@@ -16,4 +16,6 @@ return [
 
     'use_for_app_env' =>  ['local', 'dev', 'prod'],
 
+    'using_Laravel_5_1' =>  false,
+
 ];

@@ -162,7 +162,18 @@ class DynamicMysqlDumpService
 
             $remove_file_key =  ($this->use_zip)?sprintf('%s/%s-%s.zip', $this->specific_storage_path, $date, $database_name ):sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
 
-            Storage::disk($this->specific_storage_type)->delete($remove_file_key);
+            $using_Laravel_5_1  = Config::get('dynamic-mysql-dump.using_Laravel_5_1');
+
+            if($using_Laravel_5_1)
+            {
+                if( Storage::disk($this->specific_storage_type)->has($remove_file_key))
+                {
+                    Storage::disk($this->specific_storage_type)->delete($remove_file_key);
+                }
+            }
+            else{
+                Storage::disk($this->specific_storage_type)->delete($remove_file_key);
+            }
         }
     }
 
