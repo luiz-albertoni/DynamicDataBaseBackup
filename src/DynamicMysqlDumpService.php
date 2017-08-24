@@ -98,7 +98,7 @@ class DynamicMysqlDumpService
         $port           = getenv('DB_PORT');
 
         if ($this->use_zip) {
-            $this->file_name=  sprintf('%s-%s.zip', date('Y-m-d'), $database_name );
+            $this->file_name=  sprintf('%s-%s.sql.gz', date('Y-m-d'), $database_name );
             $cmd =  sprintf('mysqldump -u %s --password=%s -h %s --port=%s %s | gzip  > %s', $user_name, $password, $host, $port, $database_name,  $this->file_name);
         } else {
             $this->file_name=  sprintf('%s-%s.sql', date('Y-m-d'), $database_name );
