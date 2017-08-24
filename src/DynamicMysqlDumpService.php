@@ -160,7 +160,7 @@ class DynamicMysqlDumpService
             $date = date("Y-m-d", strtotime("-".$stored_day." day"));
             $database_name   = getenv('DB_DATABASE');
 
-            $remove_file_key =  ($this->use_zip)?sprintf('%s/%s-%s.zip', $this->specific_storage_path, $date, $database_name ):sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
+            $remove_file_key =  ($this->use_zip)?sprintf('%s/%s-%s.sql.gz', $this->specific_storage_path, $date, $database_name ):sprintf('%s/%s-%s.sql', $this->specific_storage_path, $date, $database_name );
 
             $using_Laravel_5_1  = Config::get('dynamic-mysql-dump.using_Laravel_5_1');
 
